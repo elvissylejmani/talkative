@@ -36,10 +36,6 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-// interface UserModelInterface extends mongoose.Model<any> {
-//     build(attr: IUser): any
-// }
-
 const User = mongoose.model("User", userSchema);
 
 export { User };

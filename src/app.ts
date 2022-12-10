@@ -1,18 +1,28 @@
 import express from 'express';
 import { userRouter } from './routes/user'
 import mongoose from 'mongoose';
+import { config } from 'dotenv';
+
+config();
+
+import { env } from './config/globals';
+
+
+(async () => {
+    try {
+        await mongoose.connect(env.DATABASE_HOST)
+        console.log("Database connected")
+    } catch (err) {
+        console.log('error: ' + err)
+    }
+})()
 
 const app = express();
-
-mongoose
-    .connect('mongodb://127.0.0.1:27017/talkative?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false', {})
-    .then((db) => console.log("db is connected"))
-    .catch((err) => console.log(err));
 
 app.use(userRouter);
 
 app.use('/api/', userRouter);
 
-app.listen(3000, () => {
-    console.log('server started');
+app.listen(env.PORT, () => {
+    console.log(`server started on port ${env.PORT}`);
 })
