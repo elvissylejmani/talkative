@@ -4,7 +4,6 @@ import * as jwt from "jsonwebtoken"
 
 export default new class AuthenticateController {
     public async signUp() {
-        console.log("HIII");
         passport.authenticate('signup', { session: false }),
             async (req: Request, res: Response, next: any) => {
                 try {
@@ -19,7 +18,6 @@ export default new class AuthenticateController {
     }
 
     public async logIn(req: Request, res: Response, next: NextFunction) {
-        console.log(req);
         return passport.authenticate(
             'login',
             async (err, user, info) => {

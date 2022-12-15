@@ -11,8 +11,6 @@ passport.use(
             passwordField: 'password'
         },
         async (email, password, done) => {
-            console.log("Hi");
-
             try {
                 const user = await User.create({ email, password });
 
