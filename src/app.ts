@@ -2,6 +2,9 @@ import express from 'express';
 import { userRouter } from './routes/user'
 import mongoose from 'mongoose';
 import { config } from 'dotenv';
+import passport = require('passport');
+
+require('./Middleware/auth');
 
 config();
 
@@ -18,6 +21,9 @@ import { env } from './config/globals';
 })()
 
 const app = express();
+app.use(passport.initialize());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.use(userRouter);
 

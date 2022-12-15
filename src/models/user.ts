@@ -1,34 +1,17 @@
-import mongoose from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
+import bcrypt from "bcrypt";
+interface IUser extends Document {
 
-interface IUser extends mongoose.Document {
-    name: String,
-    last_name: String,
-    email: String,
-    birth_day: String,
-    password: String,
-    token?: String
+    email: string,
+    password: string,
+    isValidPassword(password: string): Promise<boolean>
 }
 
-const userSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    last_name: {
-        type: String,
-        required: true
-    },
+const userSchema = new Schema<IUser>({
     email: {
         type: String,
-        required: true
-    },
-    birth_day: {
-        type: String,
-        required: true
-    },
-    gender: {
-        type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String,
@@ -36,6 +19,24 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-const User = mongoose.model("User", userSchema);
+userSchema.pre(
+    'save',
+    async function (next) {
+        const user = this;
+        const hash = await bcrypt.hash(this.password, 10);
+
+        this.password = hash;
+        next();
+    }
+);
+
+userSchema.methods.isValidPassword = async function (password: string) {
+    const user = this;
+    const compare = await bcrypt.compare(password, user.password);
+
+    return compare;
+}
+
+const User = model("User", userSchema);
 
 export { User };

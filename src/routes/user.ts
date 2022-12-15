@@ -1,16 +1,19 @@
 import express, { Request, Response } from "express";
-import { User } from '../models/user';
+import AuthenticateController from "../Controllers/authenticate";
+import passport from "passport";
 const router = express.Router();
 
-// router.get('/api/user', [], (req: Request, res: Response) => {
-//     return res.send('ss');
-// });
+router.post(
+    '/signup',
+    passport.authenticate('signup', { session: false }),
+    async (req, res, next) => {
+        res.json({
+            message: 'Signup successful',
+            user: req.user
+        });
+    }
+);
 
-router.route('/user')
-    .get(async (req: Request, res: Response) => {
-        return res.send({users: await User.find({})});
-    });
-
-// router.post()
+router.post('/log-in', AuthenticateController.logIn);
 
 export { router as userRouter };
