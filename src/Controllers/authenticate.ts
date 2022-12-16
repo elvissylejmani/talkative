@@ -1,20 +1,16 @@
-import passport from "passport";
 import { Request, Response, NextFunction } from "express";
-import * as jwt from "jsonwebtoken"
+import * as jwt from "jsonwebtoken";
+import passport from "passport";
+import { config } from 'dotenv';
+config();
+import { env } from '../config/globals';
 
 export default new class AuthenticateController {
-    public async signUp() {
-        passport.authenticate('signup', { session: false }),
-            async (req: Request, res: Response, next: any) => {
-                try {
-                    res.json({
-                        message: 'Signup successful',
-                        user: req.user
-                    });
-                } catch (error) {
-                    res.json(error).status(500);
-                }
-            }
+    public async signUp(req: Request, res: Response, next: NextFunction) {
+        const body = { _id: req.user };
+        const token = jwt.sign({ user: body }, env.JWT_SECRET);
+
+        return res.json({ token });
     }
 
     public async logIn(req: Request, res: Response, next: NextFunction) {
@@ -23,9 +19,7 @@ export default new class AuthenticateController {
             async (err, user, info) => {
                 try {
                     if (err || !user) {
-                        const error = new Error('An error occurred.');
-
-                        return next(error);
+                        return res.status(401).json({ message: "wrong credentials" })
                     }
 
                     req.login(
@@ -34,8 +28,8 @@ export default new class AuthenticateController {
                         async (error) => {
                             if (error) return next(error);
 
-                            const body = { _id: user._id, email: user.email };
-                            const token = jwt.sign({ user: body }, 'TOP_SECRET');
+                            const body = { _id: user };
+                            const token = jwt.sign({ user: body }, env.JWT_SECRET);
 
                             return res.json({ token });
                         }

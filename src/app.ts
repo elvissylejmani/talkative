@@ -10,7 +10,6 @@ config();
 
 import { env } from './config/globals';
 
-
 (async () => {
     try {
         await mongoose.connect(env.DATABASE_HOST)

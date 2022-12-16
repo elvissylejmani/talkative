@@ -2,17 +2,22 @@ import passport from "passport";
 import { Strategy as localStrategy } from "passport-local";
 import { User } from "../models/user";
 import { Strategy as JWTstrategy, ExtractJwt } from "passport-jwt";
+import { config } from 'dotenv';
+config();
+import { env } from '../config/globals';
 
 passport.use(
     'signup',
     new localStrategy(
         {
             usernameField: 'email',
-            passwordField: 'password'
+            passwordField: 'password',
+            passReqToCallback: true,
         },
-        async (email, password, done) => {
+        async (req, email, password, done) => {
             try {
-                const user = await User.create({ email, password });
+                console.log(req.body);
+                const user = await User.create({ email, password, name: req.body.name, user_name: req.body.userName, birth_day: req.body.birthDay, gender: req.body.gender });
 
                 return done(null, user);
             } catch (error) {
@@ -54,7 +59,7 @@ passport.use(
 passport.use(
     new JWTstrategy(
         {
-            secretOrKey: 'TOP_SECRET',
+            secretOrKey: env.JWT_SECRET,
             jwtFromRequest: ExtractJwt.fromUrlQueryParameter('secret_token')
         },
         async (token, done) => {

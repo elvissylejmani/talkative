@@ -1,17 +1,36 @@
 import { Schema, model, Document } from 'mongoose';
 import bcrypt from "bcrypt";
-interface IUser extends Document {
 
-    email: string,
-    password: string,
-    isValidPassword(password: string): Promise<boolean>
+
+interface IUser extends Document {
+    name: String,
+    user_name: String,
+    email: String,
+    birth_day: String,
+    password: String,
+    token?: String
 }
 
-const userSchema = new Schema<IUser>({
+const userSchema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    user_name: {
+        type: String,
+        required: true
+    },
     email: {
         type: String,
-        required: true,
-        unique: true
+        required: true
+    },
+    birth_day: {
+        type: String,
+        required: true
+    },
+    gender: {
+        type: String,
+        required: true
     },
     password: {
         type: String,
