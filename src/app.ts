@@ -2,7 +2,7 @@ import express from 'express';
 import { userRouter } from './routes/user'
 import mongoose from 'mongoose';
 import { config } from 'dotenv';
-import passport = require('passport');
+import passport from 'passport';
 
 require('./Middleware/auth');
 
